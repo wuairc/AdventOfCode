@@ -1,7 +1,5 @@
 package wuairc.aoc
 
-import wuairc.aoc.util.Template
-
 fun main() {
     Day01().solve()
 }
@@ -55,6 +53,4 @@ class Day01 : Template(1) {
             firstDigit * 10 + secondDigit
         }
     }
-
-    override fun expectedTestOutput(): Pair<Int, Int> = 142 to 281
 }
