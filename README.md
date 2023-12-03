@@ -1,5 +1,7 @@
 # AdventOfCode
 
+My Advent of Code solutions are written in idiomatic Kotlin, prioritizing readability and maintainability over absolute performance.
+
 Welcome to the Advent of Code[^aoc] Kotlin project created by [wuairc][github] using the [Advent of Code Kotlin Template][template] delivered by JetBrains.
 
 In this repository, wuairc is about to provide solutions for the puzzles using [Kotlin][kotlin] language.
