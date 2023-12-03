@@ -39,23 +39,19 @@ class Day01 : Template(1) {
 
         val maxKeyLength = digitMap.keys.maxOf { it.length }
 
+        val digitFinder: (String) -> Sequence<Int> = { line ->
+            line.windowedSequence(maxKeyLength, 1, true).mapNotNull { slice ->
+                for (entry in digitMap.entries) {
+                    if (slice.startsWith(entry.key)) {
+                        return@mapNotNull entry.value
+                    }
+                }
+                return@mapNotNull null
+            }
+        }
         return input.sumOf {
-            val firstDigit: Int = it.windowedSequence(maxKeyLength, 1, true).mapNotNull { slice ->
-                for (entry in digitMap.entries) {
-                    if (slice.startsWith(entry.key)) {
-                        return@mapNotNull entry.value
-                    }
-                }
-                return@mapNotNull null
-            }.first()
-            val secondDigit: Int = it.windowedSequence(maxKeyLength, 1, true).mapNotNull { slice ->
-                for (entry in digitMap.entries) {
-                    if (slice.startsWith(entry.key)) {
-                        return@mapNotNull entry.value
-                    }
-                }
-                return@mapNotNull null
-            }.last()
+            val firstDigit = digitFinder(it).first()
+            val secondDigit = digitFinder(it).last()
             firstDigit * 10 + secondDigit
         }
     }
