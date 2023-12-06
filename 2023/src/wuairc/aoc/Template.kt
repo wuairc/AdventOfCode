@@ -10,7 +10,8 @@ abstract class Template(day: Int) {
     fun solve() {
         val (test1Output, test2Output) = readTestOutput()
 
-        check(part1(readInput("test1")) == test1Output)
+        val calculatedTestOutput = part1(readInput("test1"))
+        check(calculatedTestOutput == test1Output) { "expected: $test1Output, actual: $calculatedTestOutput" }
 
         val input = readInput("input")
         println("Part 1: ${part1(input)}")
@@ -19,7 +20,8 @@ abstract class Template(day: Int) {
             return
         }
 
-        check(part2(readInput("test2")) == test2Output)
+        val part2TestOutput = part2(readInput("test2"))
+        check(part2TestOutput == test2Output) { "expected: $test2Output, actual: $part2TestOutput" }
 
         println("Part 2: ${part2(input)}")
     }
