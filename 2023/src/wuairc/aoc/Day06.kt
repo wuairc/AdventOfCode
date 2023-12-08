@@ -7,12 +7,12 @@ fun main() {
 }
 
 class Day06 : Template(6) {
-    override fun part1(input: List<String>): Int {
+    override fun part1(input: List<String>): Long {
         val raceList = parseInput(input)
         return raceList.map(::getBreakRecordRaceCount).reduce { acc, i -> acc * i }
     }
 
-    override fun part2(input: List<String>): Int {
+    override fun part2(input: List<String>): Long {
         val raceList = parseInput(input)
         val timeString = raceList.joinToString(separator = "") { it.time.toInt().toString() }
         val distanceString = raceList.joinToString(separator = "") { it.distance.toInt().toString() }
@@ -26,13 +26,13 @@ class Day06 : Template(6) {
      * T: total time
      * x(T - x) > y -> x^2 - Tx + y < 0
      */
-    private fun getBreakRecordRaceCount(race: Race): Int {
+    private fun getBreakRecordRaceCount(race: Race): Long {
         val delta = sqrt(race.time.pow(2) - 4 * race.distance)
         assert(delta >= 0)
         val left = (race.time - delta) / 2
         val right = (race.time + delta) / 2
-        val recordLeft = ceil(left.nextUp()).toInt()
-        val recordRight = floor(right.nextDown()).toInt()
+        val recordLeft = ceil(left.nextUp()).toLong()
+        val recordRight = floor(right.nextDown()).toLong()
         assert(recordLeft < recordRight)
         return recordRight - recordLeft + 1
     }

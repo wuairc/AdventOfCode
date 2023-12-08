@@ -5,7 +5,7 @@ fun main() {
 }
 
 class Day03 : Template(3) {
-    override fun part1(input: List<String>): Int {
+    override fun part1(input: List<String>): Long {
         val schematic = parseInput(input)
         val body = schematic.windowed(3, 1).flatMap {
             it[1].getAdjacentNumbers(it)
@@ -18,10 +18,10 @@ class Day03 : Template(3) {
         } else {
             0
         }
-        return head + body + tail
+        return head.toLong() + body + tail
     }
 
-    override fun part2(input: List<String>): Int {
+    override fun part2(input: List<String>): Long {
         val schematic = parseInput(input)
         val body = schematic.windowed(3, 1).flatMap {
             it[1].getGearRatio(it)
@@ -34,7 +34,7 @@ class Day03 : Template(3) {
         } else {
             0
         }
-        return head + body + tail
+        return head.toLong() + body + tail
     }
 
     private fun parseInput(input: List<String>): List<SchematicLine> = input.map { line ->

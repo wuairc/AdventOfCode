@@ -7,22 +7,14 @@ fun main() {
 }
 
 class Day05 : Template(5) {
-    override fun part1(input: List<String>): Int {
+    override fun part1(input: List<String>): Long {
         val redirectMap = parseInput(input, false)
-        val lowestLocation = redirectMap.findLowestLocation()
-        if (lowestLocation < Int.MAX_VALUE) {
-            return lowestLocation.toInt()
-        }
-        throw AssertionError(lowestLocation)
+        return redirectMap.findLowestLocation()
     }
 
-    override fun part2(input: List<String>): Int {
+    override fun part2(input: List<String>): Long {
         val redirectMap = parseInput(input, true)
-        val lowestLocation = redirectMap.findLowestLocation()
-        if (lowestLocation < Int.MAX_VALUE) {
-            return lowestLocation.toInt()
-        }
-        throw AssertionError(lowestLocation)
+        return redirectMap.findLowestLocation()
     }
 
     private fun parseInput(input: List<String>, seedsAsRange: Boolean): RedirectMap {

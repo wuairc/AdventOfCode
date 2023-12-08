@@ -5,15 +5,15 @@ fun main() {
 }
 
 class Day04 : Template(4) {
-    override fun part1(input: List<String>): Int {
+    override fun part1(input: List<String>): Long {
         val cardList = parseInput(input)
-        return cardList.sumOf { card -> card.getPoints() }
+        return cardList.sumOf { card -> card.getPoints().toLong() }
     }
 
-    override fun part2(input: List<String>): Int {
+    override fun part2(input: List<String>): Long {
         val cardList = parseInput(input)
         val state = State()
-        var totalCardNumber = 0
+        var totalCardNumber = 0L
         cardList.map(Card::getWinningNumberCount).forEachIndexed { index, winningCount ->
             val cardNumber = state.getNextCardNumber()
             totalCardNumber += cardNumber

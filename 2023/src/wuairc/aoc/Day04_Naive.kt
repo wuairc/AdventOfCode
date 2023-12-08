@@ -5,12 +5,12 @@ fun main() {
 }
 
 class Day04_Naive : Template(4) {
-    override fun part1(input: List<String>): Int {
+    override fun part1(input: List<String>): Long {
         val cardList = parseInput(input)
-        return cardList.sumOf { card -> card.getPoints() }
+        return cardList.sumOf { card -> card.getPoints().toLong() }
     }
 
-    override fun part2(input: List<String>): Int {
+    override fun part2(input: List<String>): Long {
         val cardList = parseInput(input)
         val cardNumbers = cardList.map(Card::getWinningNumberCount).toIntArray()
         cardNumbers.forEachIndexed { index, number ->
@@ -19,7 +19,7 @@ class Day04_Naive : Template(4) {
                 cardNumbers[remaining + index + 1] += number
             }
         }
-        return cardNumbers.sum()
+        return cardNumbers.sumOf { it.toLong() }
     }
 
     private fun parseInput(input: List<String>): List<Card> {

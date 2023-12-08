@@ -5,11 +5,11 @@ fun main() {
 }
 
 class DayXX : Template(TODO()) {
-    override fun part1(input: List<String>): Int {
+    override fun part1(input: List<String>): Long {
         TODO()
     }
 
-    override fun part2(input: List<String>): Int {
+    override fun part2(input: List<String>): Long {
         TODO()
     }
 }

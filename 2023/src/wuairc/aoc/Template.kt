@@ -3,9 +3,9 @@ package wuairc.aoc
 abstract class Template(day: Int) {
 
     private val dayText = day.toString().padStart(2, '0')
-    abstract fun part1(input: List<String>): Int
+    abstract fun part1(input: List<String>): Long
 
-    abstract fun part2(input: List<String>): Int
+    abstract fun part2(input: List<String>): Long
 
     fun solve() {
         val (test1Output, test2Output) = readTestOutput()
@@ -37,11 +37,11 @@ abstract class Template(day: Int) {
     /**
      * @return test1 output, test2 output, test2 output is optional
      */
-    private fun readTestOutput(): Pair<Int, Int?> {
+    private fun readTestOutput(): Pair<Long, Long?> {
         val list = readTestOutputString()
         assert(list.isNotEmpty())
-        val first = list[0].toInt()
-        val second = if (list.size == 2) list[1].toInt() else null
+        val first = list[0].toLong()
+        val second = if (list.size == 2) list[1].toLong() else null
         return first to second
     }
 }

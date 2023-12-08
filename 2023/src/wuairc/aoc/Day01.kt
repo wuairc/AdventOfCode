@@ -5,15 +5,15 @@ fun main() {
 }
 
 class Day01 : Template(1) {
-    override fun part1(input: List<String>): Int {
+    override fun part1(input: List<String>): Long {
         return input.sumOf {
             with(it.toCharArray()) {
-                first(Char::isDigit).digitToInt() * 10 + last(Char::isDigit).digitToInt()
+                first(Char::isDigit).digitToInt() * 10L + last(Char::isDigit).digitToInt()
             }
         }
     }
 
-    override fun part2(input: List<String>): Int {
+    override fun part2(input: List<String>): Long {
         val digitMap: Map<String, Int> = mapOf(
             "one" to 1,
             "two" to 2,
@@ -50,7 +50,7 @@ class Day01 : Template(1) {
         return input.sumOf {
             val firstDigit = digitFinder(it).first()
             val secondDigit = digitFinder(it).last()
-            firstDigit * 10 + secondDigit
+            firstDigit * 10L + secondDigit
         }
     }
 }

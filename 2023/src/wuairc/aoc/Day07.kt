@@ -5,24 +5,18 @@ fun main() {
 }
 
 class Day07 : Template(7) {
-    override fun part1(input: List<String>): Int {
+    override fun part1(input: List<String>): Long {
         return calculateWinning(input, Part1Rule)
     }
 
-    override fun part2(input: List<String>): Int {
+    override fun part2(input: List<String>): Long {
         return calculateWinning(input, Part2Rule)
     }
 
-    private fun calculateWinning(input: List<String>, rule: Rule): Int {
+    private fun calculateWinning(input: List<String>, rule: Rule): Long {
         val handBids = parseInput(input, rule)
-        val value = handBids.sortedWith(rule.getHandBidComparator()).withIndex().sumOf {
-            println("${it.value.bid} * ${it.index + 1}")
+        return handBids.sortedWith(rule.getHandBidComparator()).withIndex().sumOf {
             it.value.bid * (it.index + 1)
-        }
-        if (value < Int.MAX_VALUE) {
-            return value.toInt()
-        } else {
-            throw AssertionError(value)
         }
     }
 

@@ -5,21 +5,21 @@ fun main() {
 }
 
 class Day02 : Template(2) {
-    override fun part1(input: List<String>): Int {
+    override fun part1(input: List<String>): Long {
         val condition = CubeInfo(12, 13, 14)
         val gameInfo = parseInput(input)
         return gameInfo.filter { game ->
             game.sampling.all { cubeInfo ->
                 condition.contains(cubeInfo)
             }
-        }.sumOf { it.id }
+        }.sumOf { it.id.toLong() }
     }
 
-    override fun part2(input: List<String>): Int {
+    override fun part2(input: List<String>): Long {
         val gameInfo = parseInput(input)
         return gameInfo.sumOf { game ->
             game.sampling.maxOf { it.red } * game.sampling.maxOf { it.blue } * game.sampling.maxOf { it.green }
-        }
+        }.toLong()
     }
 
     private fun parseInput(input: List<String>): List<Game> {
