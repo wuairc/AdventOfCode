@@ -51,7 +51,7 @@ class Day07 : Template(7) {
                 if (left == right) {
                     return 0
                 }
-                return cardOrderMap[left]!!.compareTo(cardOrderMap[right]!!)
+                return cardOrderMap.getValue(left).compareTo(cardOrderMap.getValue(right))
             }
         }
 
@@ -112,7 +112,7 @@ class Day07 : Template(7) {
                 if (left == right) {
                     return 0
                 }
-                return cardOrderMap[left]!!.compareTo(cardOrderMap[right]!!)
+                return cardOrderMap.getValue(left).compareTo(cardOrderMap.getValue(right))
             }
         }
 

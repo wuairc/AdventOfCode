@@ -1,5 +1,7 @@
 package wuairc.aoc
 
+import java.math.BigInteger
+
 fun main() {
     Day08().solve()
 }
@@ -8,13 +10,13 @@ class Day08 : Template(8) {
     override fun part1(input: List<String>): Long {
         val rule = Part1Rule
         val gameMap = parseInput(input, rule)
-        return navigate(gameMap, rule)
+        return navigateBruteForce(gameMap, rule)
     }
 
     override fun part2(input: List<String>): Long {
         val rule = Part2Rule
         val gameMap = parseInput(input, rule)
-        return navigate(gameMap, rule)
+        return navigate2(gameMap, rule)
     }
 
     private fun parseInput(input: List<String>, rule: Rule): GameMap {
@@ -43,7 +45,7 @@ class Day08 : Template(8) {
                 rawNode.index,
                 nodeValue,
                 rule.isEndNode(nodeValue),
-                intArrayOf(rawNodes[rawNode.left]!!.index, rawNodes[rawNode.right]!!.index)
+                intArrayOf(rawNodes.getValue(rawNode.left).index, rawNodes.getValue(rawNode.right).index)
             )
         }
 
@@ -78,7 +80,7 @@ class Day08 : Template(8) {
     /**
      * brute-force algorithm, no memory allocation during navigation
      */
-    private fun navigate(gameMap: GameMap, rule: Rule): Long {
+    private fun navigateBruteForce(gameMap: GameMap, rule: Rule): Long {
         val iterator = DirectionIterator(gameMap.directions.toTypedArray())
         val targetNodes: Array<Node> = rule.getStartingNodes(gameMap).toTypedArray()
 
@@ -94,6 +96,37 @@ class Day08 : Template(8) {
             }
         }
         return iterator.getSteps()
+    }
+
+    private fun navigate2(gameMap: GameMap, rule: Rule): Long {
+        val targetNodes: Array<Node> = rule.getStartingNodes(gameMap).toTypedArray()
+        val nodes = gameMap.nodes
+
+        val loopPeriods = targetNodes.map { targetNode ->
+            val iterator = DirectionIterator(gameMap.directions.toTypedArray())
+            var current = targetNode
+            while (iterator.hasNext()) {
+                val direction = iterator.next()
+                current = navigateToNextNode(current, direction, nodes)
+                if (current.isEnd) {
+                    val loopCount = iterator.getLoopCount()
+                    println("$targetNode = $loopCount")
+                    // I don't like unspoken assumptions in this puzzle
+                    assert(loopCount.second == 0L) { loopCount }
+                    break
+                }
+            }
+            iterator.getSteps()
+        }
+        return lcm(loopPeriods).longValueExact()
+    }
+
+    private fun BigInteger.lcm(other: BigInteger): BigInteger {
+        return this.multiply(other) / this.gcd(other)
+    }
+
+    private fun lcm(numbers: Iterable<Long>): BigInteger {
+        return numbers.map { BigInteger(it.toString()) }.reduce { acc, n -> acc.lcm(n) }
     }
 
     private inline fun navigateToNextNode(node: Node, direction: Direction, nodes: List<Node>): Node {
@@ -125,6 +158,10 @@ class Day08 : Template(8) {
         }
 
         fun getSteps(): Long = steps
+
+        fun getLoopCount(): Pair<Long, Long> {
+            return steps / length to steps % length
+        }
     }
 
     enum class Direction(val index: Int) {
