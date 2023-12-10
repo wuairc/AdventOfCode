@@ -6,110 +6,132 @@ fun main() {
 
 class Day08 : Template(8) {
     override fun part1(input: List<String>): Long {
-        val gameMap = parseInput(input)
-        return navigate(gameMap, Part1Rule)
+        val rule = Part1Rule
+        val gameMap = parseInput(input, rule)
+        return navigate(gameMap, rule)
     }
 
     override fun part2(input: List<String>): Long {
-        val gameMap = parseInput(input)
-        return navigate(gameMap, Part2Rule)
+        val rule = Part2Rule
+        val gameMap = parseInput(input, rule)
+        return navigate(gameMap, rule)
     }
 
-    private fun parseInput(input: List<String>): GameMap {
+    private fun parseInput(input: List<String>, rule: Rule): GameMap {
         val iterator = input.iterator()
         val directionLine = iterator.next()
         val directions = directionLine.map { if (it == 'L') Direction.Left else Direction.Right }
 
         iterator.next()
 
-        val nodes = mutableMapOf<String, NextNode>()
-        for (line in iterator) {
+        class RawNode(val index: Int, val left: String, val right: String)
+
+        val rawNodes = mutableMapOf<String, RawNode>()
+        for ((index, line) in iterator.withIndex()) {
             val (fromLine, toLine) = line.split('=', limit = 2)
             val left = toLine.substring(toLine.indexOf('(') + 1, toLine.indexOf(',')).trim()
             val right = toLine.substring(toLine.indexOf(',') + 1, toLine.indexOf(')')).trim()
-            val nextNode = NextNode(left, right)
-            nodes[fromLine.trim()] = nextNode
+            val nodeValue = fromLine.trim()
+            val rawNode = RawNode(index, left, right)
+            rawNodes[nodeValue] = rawNode
         }
+
+        val nodes = rawNodes.map {
+            val nodeValue = it.key
+            val rawNode = it.value
+            Node(
+                rawNode.index,
+                nodeValue,
+                rule.isEndNode(nodeValue),
+                intArrayOf(rawNodes[rawNode.left]!!.index, rawNodes[rawNode.right]!!.index)
+            )
+        }
+
         return GameMap(directions, nodes)
     }
 
     interface Rule {
-        fun getStartingNodes(gameMap: GameMap): List<String>
-        fun isReachEnd(nodes: List<String>): Boolean
+        fun getStartingNodes(gameMap: GameMap): List<Node>
+        fun isEndNode(nodeValue: String): Boolean
     }
 
     object Part1Rule : Rule {
-        override fun getStartingNodes(gameMap: GameMap): List<String> {
-            return listOf("AAA")
+        override fun getStartingNodes(gameMap: GameMap): List<Node> {
+            return listOf(gameMap.nodes.first { it.value == "AAA" })
         }
 
-        override fun isReachEnd(nodes: List<String>): Boolean {
-            return nodes.all { it == "ZZZ" }
+        override fun isEndNode(nodeValue: String): Boolean {
+            return nodeValue == "ZZZ"
         }
     }
 
     object Part2Rule : Rule {
-        override fun getStartingNodes(gameMap: GameMap): List<String> {
-            return gameMap.nodes.keys.filter { it.endsWith('A') }
+        override fun getStartingNodes(gameMap: GameMap): List<Node> {
+            return gameMap.nodes.filter { it.value.endsWith('A') }
         }
 
-        override fun isReachEnd(nodes: List<String>): Boolean {
-            return nodes.all { it.endsWith('Z') }
+        override fun isEndNode(nodeValue: String): Boolean {
+            return nodeValue.endsWith('Z')
         }
     }
 
+    /**
+     * brute-force algorithm, no memory allocation during navigation
+     */
     private fun navigate(gameMap: GameMap, rule: Rule): Long {
-        val iterator = DirectionIterator(gameMap.directions)
-        var current = rule.getStartingNodes(gameMap)
+        val iterator = DirectionIterator(gameMap.directions.toTypedArray())
+        val targetNodes: Array<Node> = rule.getStartingNodes(gameMap).toTypedArray()
 
         val nodes = gameMap.nodes
         while (iterator.hasNext()) {
-            val nextDirection = iterator.next()
-            current = current.map { node ->
-                navigateToNextNode(node, nextDirection, nodes)
+            val direction = iterator.next()
+            // update targetNodes in place to avoid object allocation, to minimize GC
+            repeat(targetNodes.size) { index ->
+                targetNodes[index] = navigateToNextNode(targetNodes[index], direction, nodes)
             }
-            if (rule.isReachEnd(current)) {
+            if (targetNodes.all { it.isEnd }) {
                 break
             }
         }
         return iterator.getSteps()
     }
 
-    private fun navigateToNextNode(node: String, nextDirection: Direction, nodes: Map<String, NextNode>): String {
-        val nextNode = nodes.getOrElse(node) { throw AssertionError() }
-        return when (nextDirection) {
-            Direction.Left -> nextNode.left
-            Direction.Right -> nextNode.right
-        }
+    private inline fun navigateToNextNode(node: Node, direction: Direction, nodes: List<Node>): Node {
+        val nextIndex = node.next[direction.index]
+        return nodes[nextIndex]
     }
 
-    private class DirectionIterator(val directions: List<Direction>) : Iterator<Direction> {
+    private class DirectionIterator(val directions: Array<Direction>) : Iterator<Direction> {
 
-        private var iterator: Iterator<Direction> = directions.iterator()
+        private val length = directions.size
+
+        private var index: Int = 0
 
         private var steps: Long = 0
 
         override fun hasNext(): Boolean {
-            if (!iterator.hasNext()) {
-                iterator = directions.iterator()
-                iterator.hasNext()
+            if (index == length) {
+                index = 0
             }
             return true
         }
 
         override fun next(): Direction {
             steps++
-            return iterator.next()
+            if (steps.countTrailingZeroBits() > 26) {
+                println(steps)
+            }
+            return directions[index++]
         }
 
         fun getSteps(): Long = steps
     }
 
-    enum class Direction {
-        Left, Right
+    enum class Direction(val index: Int) {
+        Left(0), Right(1)
     }
 
-    data class NextNode(val left: String, val right: String)
+    data class Node(val index: Int, val value: String, val isEnd: Boolean, val next: IntArray)
 
-    data class GameMap(val directions: List<Direction>, val nodes: Map<String, NextNode>)
+    data class GameMap(val directions: List<Direction>, val nodes: List<Node>)
 }
