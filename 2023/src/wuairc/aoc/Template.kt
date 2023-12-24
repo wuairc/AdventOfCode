@@ -21,7 +21,7 @@ abstract class Template(day: Int) {
         }
 
         val part2TestOutput = part2(readInput("test2"))
-//        check(part2TestOutput == test2Output) { "expected: $test2Output, actual: $part2TestOutput" }
+        check(part2TestOutput == test2Output) { "expected: $test2Output, actual: $part2TestOutput" }
 
         println("Part 2: ${part2(input)}")
     }
